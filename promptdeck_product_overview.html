@@ -1,0 +1,261 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+
+.doc { padding: 1.5rem 0; max-width: 680px; }
+
+.hero { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.product-name { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+.tagline { font-size: 14px; color: var(--color-text-secondary); margin-top: 6px; line-height: 1.6; }
+.badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.badge { font-size: 12px; padding: 3px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); color: var(--color-text-secondary); }
+.badge.tech { background: var(--color-background-info); color: var(--color-text-info); border-color: transparent; }
+
+.section { margin-bottom: 2rem; }
+.section-title { font-size: 13px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
+
+.pain-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+.pain-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px 14px; }
+.pain-icon { font-size: 18px; color: var(--color-text-secondary); margin-bottom: 6px; }
+.pain-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.pain-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.feature-list { display: flex; flex-direction: column; gap: 8px; }
+.feature-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary); }
+.feature-item.must { border-left: 2px solid var(--color-border-info); }
+.feature-item.diff { border-left: 2px solid #3B8BD4; }
+.feature-item.bonus { border-left: 2px solid var(--color-border-tertiary); opacity: 0.8; }
+.feature-label { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px; white-space: nowrap; margin-top: 1px; }
+.label-must { background: var(--color-background-info); color: var(--color-text-info); }
+.label-diff { background: #E6F1FB; color: #185FA5; }
+.label-bonus { background: var(--color-background-secondary); color: var(--color-text-secondary); }
+@media (prefers-color-scheme: dark) {
+  .label-diff { background: #0C447C; color: #85B7EB; }
+}
+.feature-content { flex: 1; }
+.feature-name { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; }
+.feature-why { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.scope-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.scope-box { border-radius: var(--border-radius-md); padding: 12px 14px; }
+.scope-do { background: var(--color-background-success); border: 0.5px solid var(--color-border-success); }
+.scope-dont { background: var(--color-background-danger); border: 0.5px solid var(--color-border-danger); }
+.scope-title { font-size: 12px; font-weight: 500; margin-bottom: 8px; }
+.scope-do .scope-title { color: var(--color-text-success); }
+.scope-dont .scope-title { color: var(--color-text-danger); }
+.scope-item { font-size: 12px; color: var(--color-text-secondary); line-height: 1.8; display: flex; align-items: flex-start; gap: 6px; }
+.scope-item i { margin-top: 2px; font-size: 13px; }
+.scope-do .scope-item i { color: var(--color-text-success); }
+.scope-dont .scope-item i { color: var(--color-text-danger); }
+
+.timeline { display: flex; flex-direction: column; gap: 0; }
+.tl-item { display: flex; gap: 16px; }
+.tl-left { display: flex; flex-direction: column; align-items: center; width: 32px; flex-shrink: 0; }
+.tl-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--color-text-secondary); margin-top: 4px; flex-shrink: 0; }
+.tl-dot.active { background: var(--color-text-info); }
+.tl-line { flex: 1; width: 1px; background: var(--color-border-tertiary); margin: 4px 0; }
+.tl-content { padding-bottom: 20px; flex: 1; }
+.tl-week { font-size: 11px; color: var(--color-text-tertiary); font-weight: 500; margin-bottom: 3px; }
+.tl-task { font-size: 13px; color: var(--color-text-primary); font-weight: 500; margin-bottom: 3px; }
+.tl-detail { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.story-box { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 16px 18px; }
+.story-quote { font-size: 14px; color: var(--color-text-primary); line-height: 1.7; font-style: italic; border-left: 2px solid var(--color-border-info); padding-left: 14px; margin-bottom: 10px; }
+.story-label { font-size: 12px; color: var(--color-text-secondary); }
+
+.cursor-box { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 14px 16px; }
+.cursor-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.prompt-block { font-family: var(--font-mono); font-size: 12px; color: var(--color-text-secondary); line-height: 1.7; white-space: pre-wrap; }
+
+.divider { height: 0.5px; background: var(--color-border-tertiary); margin: 1.5rem 0; }
+</style>
+
+<div class="doc">
+  <div class="hero">
+    <div class="product-name">PromptDeck</div>
+    <div class="tagline">面向设计师的 prompt 随身卡组<br>随时取用，跨平台复用，内置 LA 专业模板</div>
+    <div class="badge-row">
+      <span class="badge tech">HTML + CSS + JS</span>
+      <span class="badge tech">localStorage</span>
+      <span class="badge tech">纯前端，无后端</span>
+      <span class="badge">MVP 预计 2–3 周</span>
+      <span class="badge">可部署到 GitHub Pages</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">解决的三个痛点</div>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="pain-icon"><i class="ti ti-folders" aria-hidden="true"></i></div>
+        <div class="pain-title">多平台收藏混乱</div>
+        <div class="pain-desc">从各处刷到的好 prompt 分散在不同 App，找不到、记不住</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon"><i class="ti ti-wifi-off" aria-hidden="true"></i></div>
+        <div class="pain-title">网络丢失重打</div>
+        <div class="pain-desc">发出去没收到回复，又没存档，只能重新手打一遍长 prompt</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon"><i class="ti ti-copy" aria-hidden="true"></i></div>
+        <div class="pain-title">跨平台复用麻烦</div>
+        <div class="pain-desc">同一条 prompt 想在 Claude / ChatGPT / Midjourney 都用，没有统一出口</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">功能清单（按优先级）</div>
+    <div class="feature-list">
+      <div class="feature-item must">
+        <span class="feature-label label-must">必须有</span>
+        <div class="feature-content">
+          <div class="feature-name">新建 / 保存 prompt</div>
+          <div class="feature-why">标题 + 正文 + 标签，本地存储，刷新不丢失</div>
+        </div>
+      </div>
+      <div class="feature-item must">
+        <span class="feature-label label-must">必须有</span>
+        <div class="feature-content">
+          <div class="feature-name">搜索 + 标签筛选</div>
+          <div class="feature-why">关键词实时搜索，点标签快速过滤分类</div>
+        </div>
+      </div>
+      <div class="feature-item must">
+        <span class="feature-label label-must">必须有</span>
+        <div class="feature-content">
+          <div class="feature-name">一键复制到剪贴板</div>
+          <div class="feature-why">解决"重打"核心痛点，点一下就能粘贴到任意 AI 对话框</div>
+        </div>
+      </div>
+      <div class="feature-item diff">
+        <span class="feature-label label-diff">差异化</span>
+        <div class="feature-content">
+          <div class="feature-name">草稿暂存区</div>
+          <div class="feature-why">发送前先存一份"发送中"状态，确认有回复后手动归档，解决网络丢失问题</div>
+        </div>
+      </div>
+      <div class="feature-item diff">
+        <span class="feature-label label-diff">差异化</span>
+        <div class="feature-content">
+          <div class="feature-name">平台适配标签</div>
+          <div class="feature-why">每条 prompt 可标记"适合 Claude / ChatGPT / Midjourney"，记录哪个 AI 上效果好</div>
+        </div>
+      </div>
+      <div class="feature-item diff">
+        <span class="feature-label label-diff">差异化</span>
+        <div class="feature-content">
+          <div class="feature-name">LA 专业模板包（内置）</div>
+          <div class="feature-why">预装场地分析模板、评图汇报结构、Midjourney 风格描述词——你有资格做，别人没有</div>
+        </div>
+      </div>
+      <div class="feature-item bonus">
+        <span class="feature-label label-bonus">加分项</span>
+        <div class="feature-content">
+          <div class="feature-name">使用记录 / 最近使用</div>
+          <div class="feature-why">记录上次用某条 prompt 是什么时候，方便找高频使用的条目</div>
+        </div>
+      </div>
+      <div class="feature-item bonus">
+        <span class="feature-label label-bonus">加分项</span>
+        <div class="feature-content">
+          <div class="feature-name">导入 / 导出 JSON</div>
+          <div class="feature-why">换设备时可以迁移数据，也能和朋友分享整个 prompt 库</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">做 / 不做边界</div>
+    <div class="scope-grid">
+      <div class="scope-box scope-do">
+        <div class="scope-title"><i class="ti ti-check" aria-hidden="true"></i> MVP 范围内</div>
+        <div class="scope-item"><i class="ti ti-check" aria-hidden="true"></i><span>本地存储（localStorage）</span></div>
+        <div class="scope-item"><i class="ti ti-check" aria-hidden="true"></i><span>纯静态网页，无服务器</span></div>
+        <div class="scope-item"><i class="ti ti-check" aria-hidden="true"></i><span>内置 LA 模板数据</span></div>
+        <div class="scope-item"><i class="ti ti-check" aria-hidden="true"></i><span>响应式，手机也能用</span></div>
+      </div>
+      <div class="scope-box scope-dont">
+        <div class="scope-title"><i class="ti ti-x" aria-hidden="true"></i> MVP 不做</div>
+        <div class="scope-item"><i class="ti ti-x" aria-hidden="true"></i><span>账号 / 登录系统</span></div>
+        <div class="scope-item"><i class="ti ti-x" aria-hidden="true"></i><span>云同步 / 多设备</span></div>
+        <div class="scope-item"><i class="ti ti-x" aria-hidden="true"></i><span>直接调用 AI API</span></div>
+        <div class="scope-item"><i class="ti ti-x" aria-hidden="true"></i><span>AI 自动分类 prompt</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">建议开发时间线</div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-left"><div class="tl-dot active"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-week">第 1 天</div>
+          <div class="tl-task">搭框架 + 存取数据</div>
+          <div class="tl-detail">页面结构、新建表单、localStorage 存读，能存一条 prompt 并显示出来</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-week">第 2–3 天</div>
+          <div class="tl-task">搜索 + 标签 + 复制</div>
+          <div class="tl-detail">关键词搜索过滤、标签筛选、一键复制剪贴板，核心功能跑通</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-week">第 4 天</div>
+          <div class="tl-task">草稿区 + 平台标签</div>
+          <div class="tl-detail">差异化功能上线，加入预置 LA 模板包内容</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-content">
+          <div class="tl-week">第 5–6 天</div>
+          <div class="tl-task">样式打磨 + 部署</div>
+          <div class="tl-detail">UI 调整、响应式测试、推到 GitHub，开启 Pages，拿到真实 URL</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-left"><div class="tl-dot"></div></div>
+        <div class="tl-content">
+          <div class="tl-week">第 7 天（缓冲）</div>
+          <div class="tl-task">加分项 + 截图留档</div>
+          <div class="tl-detail">时间够就加导入导出，截图 / 录 GIF，写 README 说明"解决了什么问题"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">面试叙事脚本</div>
+    <div class="story-box">
+      <div class="story-quote">我发现设计师在跨平台使用多个 AI 工具时，prompt 管理成本很高——好不容易写的长 prompt 会因网络问题丢失，收藏在各处的提示词散乱难找，现有工具要么面向开发者团队太重，要么只是个收藏夹太轻。我从自身痛点出发，做了一个轻量的 prompt 管理工具，内置景观设计专业模板，面向设计工作流。</div>
+      <div class="story-label">这个叙事结构包含：发现问题 → 市场分析 → 差异化定位 → 构建解决方案 → 垂直领域壁垒</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">给 Cursor 的启动 prompt</div>
+    <div class="cursor-box">
+      <div class="cursor-title"><i class="ti ti-terminal" aria-hidden="true"></i> 复制这段话，粘贴给 Cursor</div>
+      <div class="prompt-block">帮我创建一个叫 PromptDeck 的工具网页，文件名 index.html。
+
+功能要求：
+1. 新建 prompt：输入标题、正文、标签（多个用逗号分隔）、适用平台（Claude/ChatGPT/Midjourney 多选）
+2. 显示所有已保存的 prompt 卡片列表
+3. 每张卡片有：复制按钮（一键复制正文到剪贴板）、删除按钮、标签展示
+4. 顶部搜索框：实时过滤标题和正文
+5. 数据用 localStorage 存储，刷新页面不丢失
+6. 预置 3 条示例 prompt，标签包含"景观设计"
+
+风格：简洁现代，深色主题，中文界面。</div>
+    </div>
+  </div>
+</div>
