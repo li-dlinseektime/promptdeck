@@ -197,6 +197,7 @@
       cursor: pointer;
       transition: background 0.12s, border-color 0.12s;
       text-align: left;
+      user-select: none;
     }
 
     .filter-chip:hover {
@@ -218,6 +219,16 @@
 
     .filter-chip.active .filter-count {
       color: var(--accent);
+    }
+
+    .filter-chip .filter-check {
+      display: none;
+      font-size: 0.65rem;
+      margin-right: 1px;
+    }
+
+    .filter-chip.active .filter-check {
+      display: inline;
     }
 
     .filter-empty {
@@ -491,6 +502,7 @@
     .platform-picker-wrap {
       width: 100%;
       margin-top: 10px;
+      position: relative;
     }
 
     .platform-picker-label {
@@ -501,10 +513,82 @@
       margin-bottom: 8px;
     }
 
-    .platform-picker {
+    .platform-picker-trigger {
       display: flex;
-      flex-direction: column;
-      gap: 10px;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+      padding: 8px 12px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      text-align: left;
+    }
+
+    .platform-picker-trigger:hover {
+      background: rgba(55, 53, 47, 0.06);
+    }
+
+    .platform-picker-trigger:focus {
+      border-color: rgba(35, 131, 226, 0.25);
+      outline: none;
+    }
+
+    .platform-picker-trigger .trigger-placeholder {
+      color: var(--text-muted);
+      flex: 1;
+    }
+
+    .platform-picker-trigger .trigger-selected {
+      flex: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .platform-picker-trigger .trigger-selected .sel-chip {
+      font-size: 0.72rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(35, 131, 226, 0.12);
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .platform-picker-trigger .trigger-arrow {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+
+    .platform-picker-trigger.open .trigger-arrow {
+      transform: rotate(180deg);
+    }
+
+    .platform-picker-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 16px rgba(15, 15, 15, 0.08), 0 1px 4px rgba(15, 15, 15, 0.04);
+      padding: 10px 12px;
+      display: none;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .platform-picker-dropdown.open {
+      display: block;
     }
 
     .platform-group-label {
@@ -513,7 +597,12 @@
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      margin-bottom: 2px;
+      margin-bottom: 4px;
+      margin-top: 8px;
+    }
+
+    .platform-group-label:first-child {
+      margin-top: 0;
     }
 
     .platform-chips {
@@ -550,32 +639,6 @@
       accent-color: var(--accent);
       cursor: pointer;
       margin: 0;
-    }
-
-    .platform-picker:not(.is-expanded) .platform-chip:not(.is-featured):not(:has(input:checked)) {
-      display: none;
-    }
-
-    .platform-picker-actions {
-      margin-top: 4px;
-    }
-
-    .platform-expand-btn {
-      font-family: inherit;
-      font-size: 0.78rem;
-      font-weight: 500;
-      color: var(--accent);
-      background: none;
-      border: none;
-      padding: 4px 2px;
-      cursor: pointer;
-      border-radius: 4px;
-      transition: opacity 0.12s;
-    }
-
-    .platform-expand-btn:hover {
-      opacity: 0.75;
-      text-decoration: underline;
     }
 
     .btn-save {
@@ -1057,7 +1120,11 @@
           </div>
           <div class="platform-picker-wrap">
             <span class="platform-picker-label">适用平台（可多选）</span>
-            <div class="platform-picker" id="platform-picker" role="group" aria-label="适用平台"></div>
+            <button type="button" class="platform-picker-trigger" id="platform-picker-trigger" aria-haspopup="listbox" aria-expanded="false">
+              <span class="trigger-placeholder" id="platform-trigger-text">选择平台...</span>
+              <span class="trigger-arrow">▾</span>
+            </button>
+            <div class="platform-picker-dropdown" id="platform-picker-dropdown" role="listbox" aria-label="适用平台"></div>
           </div>
           <p class="draft-hint" id="draft-hint">正文已自动保存为草稿</p>
         </section>
@@ -1234,9 +1301,9 @@
     let draftTimer = null;
     let currentView = "all";
     let composerTags = [];
-    let filterTag = null;
-    let filterPlatform = null;
-    let platformPickerExpanded = false;
+    let filterTags = new Set();
+    let filterPlatforms = new Set();
+    let platformPickerOpen = false;
     let pendingDeleteId = null;
     let expandedCardId = null;
 
@@ -1275,7 +1342,7 @@
     }
 
     function hasActiveFilters() {
-      return !!(filterTag || filterPlatform);
+      return filterTags.size > 0 || filterPlatforms.size > 0;
     }
 
     function updateClearFiltersBtn() {
@@ -1283,8 +1350,8 @@
     }
 
     function clearSidebarFilters() {
-      filterTag = null;
-      filterPlatform = null;
+      filterTags.clear();
+      filterPlatforms.clear();
       updateClearFiltersBtn();
       renderSidebarFilters();
       renderDeck();
@@ -1320,7 +1387,8 @@
         ? platforms
             .map(
               ([name, count]) =>
-                `<button type="button" class="filter-chip ${filterPlatform === name ? "active" : ""}" data-filter-platform="${escapeHtml(name)}">
+                `<button type="button" class="filter-chip ${filterPlatforms.has(name) ? "active" : ""}" data-filter-platform="${escapeHtml(name)}">
+                  <span class="filter-check">✓</span>
                   ${escapeHtml(name)}
                   <span class="filter-count">${count}</span>
                 </button>`
@@ -1332,7 +1400,8 @@
         ? tags
             .map(
               ([name, count]) =>
-                `<button type="button" class="filter-chip ${filterTag === name ? "active" : ""}" data-filter-tag="${escapeHtml(name)}">
+                `<button type="button" class="filter-chip ${filterTags.has(name) ? "active" : ""}" data-filter-tag="${escapeHtml(name)}">
+                  <span class="filter-check">✓</span>
                   ${escapeHtml(name)}
                   <span class="filter-count">${count}</span>
                 </button>`
@@ -1343,7 +1412,11 @@
       sidebarPlatformsEl.querySelectorAll("[data-filter-platform]").forEach((btn) => {
         btn.addEventListener("click", () => {
           const name = btn.getAttribute("data-filter-platform");
-          filterPlatform = filterPlatform === name ? null : name;
+          if (filterPlatforms.has(name)) {
+            filterPlatforms.delete(name);
+          } else {
+            filterPlatforms.add(name);
+          }
           updateClearFiltersBtn();
           renderSidebarFilters();
           renderDeck();
@@ -1353,7 +1426,11 @@
       sidebarTagsEl.querySelectorAll("[data-filter-tag]").forEach((btn) => {
         btn.addEventListener("click", () => {
           const name = btn.getAttribute("data-filter-tag");
-          filterTag = filterTag === name ? null : name;
+          if (filterTags.has(name)) {
+            filterTags.delete(name);
+          } else {
+            filterTags.add(name);
+          }
           updateClearFiltersBtn();
           renderSidebarFilters();
           renderDeck();
@@ -1496,6 +1573,7 @@
       inputTitle.value = "";
       clearComposerTags();
       $$('input[name="platform"]').forEach((el) => { el.checked = false; });
+      updatePlatformTriggerText();
       localStorage.removeItem(STORAGE_DRAFT);
       draftHint.textContent = "正文已自动保存为草稿";
       draftHint.classList.remove("saved");
@@ -1623,21 +1701,17 @@
     }
 
     function renderPlatformPicker() {
-      const picker = $("#platform-picker");
-      if (!picker) return;
-
-      picker.classList.toggle("is-expanded", platformPickerExpanded);
+      const dropdown = $("#platform-picker-dropdown");
+      if (!dropdown) return;
 
       const groups = ["chat", "image"];
-      const hiddenCount = PLATFORMS.filter((p) => !FEATURED_PLATFORM_IDS.has(p.id)).length;
 
-      picker.innerHTML = groups
+      dropdown.innerHTML = groups
         .map((groupKey) => {
           const items = PLATFORMS.filter((p) => p.group === groupKey);
           const chips = items
             .map((p) => {
-              const featured = FEATURED_PLATFORM_IDS.has(p.id);
-              return `<label class="platform-chip ${featured ? "is-featured" : ""}">
+              return `<label class="platform-chip">
                 <input type="checkbox" name="platform" value="${escapeHtml(p.id)}" />
                 ${escapeHtml(p.label)}
               </label>`;
@@ -1652,20 +1726,74 @@
         })
         .join("");
 
-      const actions = document.createElement("div");
-      actions.className = "platform-picker-actions";
-      const toggleBtn = document.createElement("button");
-      toggleBtn.type = "button";
-      toggleBtn.className = "platform-expand-btn";
-      toggleBtn.textContent = platformPickerExpanded
-        ? "收起平台列表"
-        : `展开全部（另有 ${hiddenCount} 个）`;
-      toggleBtn.addEventListener("click", () => {
-        platformPickerExpanded = !platformPickerExpanded;
-        renderPlatformPicker();
+      // Update trigger text when checkboxes change
+      dropdown.querySelectorAll('input[name="platform"]').forEach((cb) => {
+        cb.addEventListener("change", updatePlatformTriggerText);
       });
-      actions.appendChild(toggleBtn);
-      picker.appendChild(actions);
+    }
+
+    function updatePlatformTriggerText() {
+      const checked = [...$$('input[name="platform"]:checked')].map((el) => el.value);
+      const triggerText = $("#platform-trigger-text");
+      const trigger = $("#platform-picker-trigger");
+      if (!triggerText || !trigger) return;
+
+      if (checked.length === 0) {
+        triggerText.className = "trigger-placeholder";
+        triggerText.textContent = "选择平台...";
+      } else {
+        triggerText.className = "trigger-selected";
+        triggerText.innerHTML = checked
+          .map((name) => `<span class="sel-chip">${escapeHtml(name)}</span>`)
+          .join("");
+      }
+    }
+
+    function togglePlatformDropdown(open) {
+      const dropdown = $("#platform-picker-dropdown");
+      const trigger = $("#platform-picker-trigger");
+      if (!dropdown || !trigger) return;
+
+      platformPickerOpen = open !== undefined ? open : !platformPickerOpen;
+
+      if (platformPickerOpen) {
+        dropdown.classList.add("open");
+        trigger.classList.add("open");
+        trigger.setAttribute("aria-expanded", "true");
+      } else {
+        dropdown.classList.remove("open");
+        trigger.classList.remove("open");
+        trigger.setAttribute("aria-expanded", "false");
+      }
+    }
+
+    function initPlatformPicker() {
+      const trigger = $("#platform-picker-trigger");
+      const dropdown = $("#platform-picker-dropdown");
+      if (!trigger || !dropdown) return;
+
+      renderPlatformPicker();
+
+      trigger.addEventListener("click", (e) => {
+        e.stopPropagation();
+        togglePlatformDropdown();
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener("click", (e) => {
+        const wrap = document.querySelector(".platform-picker-wrap");
+        if (wrap && !wrap.contains(e.target)) {
+          togglePlatformDropdown(false);
+        }
+      });
+
+      // Close on Escape
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && platformPickerOpen) {
+          togglePlatformDropdown(false);
+          trigger.focus();
+        }
+      });
     }
 
     function escapeHtml(str) {
@@ -1682,12 +1810,18 @@
         list = list.filter((p) => p.starred);
       }
 
-      if (filterPlatform) {
-        list = list.filter((p) => (p.platforms || []).includes(filterPlatform));
+      if (filterPlatforms.size > 0) {
+        list = list.filter((p) => {
+          const pps = p.platforms || [];
+          return [...filterPlatforms].some((fp) => pps.includes(fp));
+        });
       }
 
-      if (filterTag) {
-        list = list.filter((p) => (p.tags || []).includes(filterTag));
+      if (filterTags.size > 0) {
+        list = list.filter((p) => {
+          const pts = p.tags || [];
+          return [...filterTags].some((ft) => pts.includes(ft));
+        });
       }
 
       if (q) {
@@ -1714,10 +1848,15 @@
 
       const viewLabel = currentView === "starred" ? "收藏" : "全部";
       const q = searchInput.value.trim();
+      const filterInfo = [];
+      if (filterPlatforms.size > 0) filterInfo.push([...filterPlatforms].join(", "));
+      if (filterTags.size > 0) filterInfo.push("#" + [...filterTags].join(", #"));
+      const filterStr = filterInfo.length > 0 ? " · " + filterInfo.join(" · ") : "";
+
       deckCountEl.textContent =
         filtered.length === prompts.length && currentView === "all" && !q && !hasActiveFilters()
           ? `${filtered.length} 条`
-          : `显示 ${filtered.length} 条 · ${viewLabel}${filterPlatform ? " · " + filterPlatform : ""}${filterTag ? " · #" + filterTag : ""}${q ? " · 搜索" : ""}`;
+          : `显示 ${filtered.length} 条 · ${viewLabel}${filterStr}${q ? " · 搜索" : ""}`;
 
       if (filtered.length === 0) {
         let msg = "暂无提示词，在上方创建第一条吧";
@@ -1853,7 +1992,7 @@
     if (btnClearFilters) {
       btnClearFilters.addEventListener("click", clearSidebarFilters);
     }
-    renderPlatformPicker();
+    initPlatformPicker();
     initTagInput();
     initSaveShortcuts();
     loadPrompts();
