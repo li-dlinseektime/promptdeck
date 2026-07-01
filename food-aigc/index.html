@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>食品 AIGC 提示词库 — PromptDeck</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #FFFFFF;
+      --surface: #F7F7F5;
+      --text: #37352F;
+      --text-muted: #787774;
+      --border: rgba(55, 53, 47, 0.09);
+      --divider: rgba(55, 53, 47, 0.12);
+      --shadow-subtle: 0 1px 3px rgba(15, 15, 15, 0.04), 0 2px 8px rgba(15, 15, 15, 0.03);
+      --shadow-hover: 0 2px 6px rgba(15, 15, 15, 0.06), 0 4px 16px rgba(15, 15, 15, 0.05);
+      --radius: 8px;
+      --accent: #2383E2;
+      --accent-hover: #1a6fc4;
+      --danger: #E03E3E;
+      --success: #448361;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.5;
+    }
+
+    body {
+      overflow-y: auto;
+    }
+
+    .app {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 28px 32px 64px;
+    }
+
+    /* —— Header —— */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--divider);
+    }
+
+    .header-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      background: var(--surface);
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.12s, color 0.12s;
+      flex-shrink: 0;
+    }
+
+    .header-back:hover {
+      background: rgba(55, 53, 47, 0.08);
+      color: var(--text);
+    }
+
+    .header-title {
+      flex: 1;
+    }
+
+    .header-title h1 {
+      font-size: 1.4rem;
+      font-weight: 650;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+    }
+
+    .header-title .sub {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 400;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* —— Section —— */
+    .section {
+      margin-bottom: 28px;
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    /* —— Chip Selector —— */
+    .chip-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.12s, border-color 0.12s, box-shadow 0.12s;
+    }
+
+    .chip:hover {
+      background: rgba(55, 53, 47, 0.08);
+    }
+
+    .chip.selected {
+      background: rgba(35, 131, 226, 0.12);
+      border-color: rgba(35, 131, 226, 0.28);
+      font-weight: 600;
+    }
+
+    .chip .chip-emoji {
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    .chip .chip-check {
+      display: none;
+      font-size: 0.7rem;
+      color: var(--accent);
+    }
+
+    .chip.selected .chip-check {
+      display: inline;
+    }
+
+    /* —— Multi-select chip —— */
+    .chip.multi.selected {
+      background: rgba(35, 131, 226, 0.12);
+      border-color: rgba(35, 131, 226, 0.28);
+    }
+
+    /* —— Preview Area —— */
+    .preview-area {
+      margin-top: 8px;
+    }
+
+    .preview-box {
+      width: 100%;
+      min-height: 200px;
+      max-height: 400px;
+      resize: vertical;
+      font-family: inherit;
+      font-size: 0.88rem;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      outline: none;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .preview-box:focus {
+      background: var(--bg);
+      border-color: rgba(35, 131, 226, 0.25);
+      box-shadow: 0 0 0 3px rgba(35, 131, 226, 0.08);
+    }
+
+    .preview-box::placeholder {
+      color: var(--text-muted);
+    }
+
+    /* —— Action Bar —— */
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .btn {
+      padding: 9px 18px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      font-family: inherit;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      color: #fff;
+      background: var(--accent);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-primary.copied {
+      background: var(--success);
+    }
+
+    .btn-secondary {
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(55, 53, 47, 0.08);
+    }
+
+    .action-hint {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+
+    /* —— Layer Breakdown —— */
+    .layer-breakdown {
+      margin-top: 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .layer-item {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .layer-item:last-child {
+      border-bottom: none;
+    }
+
+    .layer-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 10px 14px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+      background: var(--surface);
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.12s;
+    }
+
+    .layer-header:hover {
+      background: rgba(55, 53, 47, 0.06);
+    }
+
+    .layer-header .layer-arrow {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+
+    .layer-header.open .layer-arrow {
+      transform: rotate(90deg);
+    }
+
+    .layer-header .layer-name {
+      flex: 1;
+    }
+
+    .layer-header .layer-status {
+      font-size: 0.68rem;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    .layer-body {
+      display: none;
+      padding: 10px 14px 14px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      white-space: pre-wrap;
+      background: var(--bg);
+    }
+
+    .layer-body.open {
+      display: block;
+    }
+
+    /* —— Toast —— */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--text);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      font-size: 0.88rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+      opacity: 0;
+      transition: transform 0.25s, opacity 0.25s;
+      pointer-events: none;
+      z-index: 200;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* —— Empty State —— */
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-muted);
+      background: var(--surface);
+      border-radius: var(--radius);
+      font-size: 0.92rem;
+    }
+
+    /* —— Responsive —— */
+    @media (max-width: 640px) {
+      .app {
+        padding: 20px 16px 48px;
+      }
+      .header {
+        flex-wrap: wrap;
+      }
+      .action-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .action-hint {
+        margin-left: 0;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <div class="header">
+      <a class="header-back" href="../index.html">← 返回 PromptDeck</a>
+      <div class="header-title">
+        <h1>🍽️ 食品 AIGC 提示词库</h1>
+        <span class="sub">选择产品与场景，组装食品图像生成 prompt</span>
+      </div>
+    </div>
+
+    <!-- Product Selection -->
+    <div class="section">
+      <div class="section-label">① 选择产品</div>
+      <div class="chip-grid" id="product-selector"></div>
+    </div>
+
+    <!-- Scene Selection -->
+    <div class="section">
+      <div class="section-label">② 选择场景</div>
+      <div class="chip-grid" id="scene-selector"></div>
+    </div>
+
+    <!-- Packaging Type -->
+    <div class="section">
+      <div class="section-label">③ 包装类型（可多选）</div>
+      <div class="chip-grid" id="packaging-selector"></div>
+    </div>
+
+    <!-- Sides Strategy -->
+    <div class="section">
+      <div class="section-label">④ 配菜策略（可多选）</div>
+      <div class="chip-grid" id="sides-selector"></div>
+    </div>
+
+    <!-- Preview -->
+    <div class="section preview-area">
+      <div class="section-label">⑤ 最终 Prompt 预览</div>
+      <textarea class="preview-box" id="prompt-preview" placeholder="选择产品与场景后，此处将自动生成组装好的 prompt…" readonly></textarea>
+      <div class="action-bar">
+        <button type="button" class="btn btn-primary" id="btn-copy">📋 复制 Prompt</button>
+        <button type="button" class="btn btn-secondary" id="btn-reset">重置选择</button>
+        <span class="action-hint" id="template-hint">未匹配模板</span>
+      </div>
+    </div>
+
+    <!-- Layer Breakdown -->
+    <div class="section">
+      <div class="section-label">各层内容明细</div>
+      <div class="layer-breakdown" id="layer-breakdown"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    // ============================================================
+    // 1. 模块库 — 各层的基础描述片段
+    // ============================================================
+    const FOOD_MODULES = {
+      // —— 真实生活感底色层（通用） ——
+      realism: "真实中国家庭厨房/餐桌场景，自然光线，iPhone 随手拍质感，画面自然不修饰，保留食材真实纹理和质感，背景有生活气息但不杂乱，少油清爽的家常风格",
+
+      // —— 负向约束层（通用） ——
+      negative: "no text overlay, no watermark, no logo, no commercial label, no studio lighting, no artificial perfection, no plastic-looking food, no flat lay from above, no sterile kitchen, no exaggerated colors, no fine dining plating, no restaurant style",
+
+      // —— 产品 ——
+      products: {
+        steak: {
+          name: "牛排",
+          en: "steak",
+          emoji: "🥩",
+          desc: "一块家常煎牛排，表面有煎制产生的焦褐色，切面呈粉红色，肉汁自然渗出",
+          sceneVariants: {
+            "pan-fry": "在普通家用不粘锅中煎制，锅底有少量油，牛排边缘微焦",
+            "raw-prep": "生牛排放在厨房案板上，表面用厨房纸吸过水分，旁边有简单调料",
+            "table-plating": "煎好的牛排放在家常餐盘中，表面有煎制纹理，旁边有简单配菜",
+            "cross-section": "用筷子或刀切开牛排，切面呈现粉红色，肉汁缓缓渗出"
+          }
+        },
+        chicken: {
+          name: "鸡排",
+          en: "chicken steak",
+          emoji: "🍗",
+          desc: "一块家常鸡胸肉或鸡腿排，表面煎至金黄微焦，肉质嫩滑多汁",
+          sceneVariants: {
+            "pan-fry": "在平底锅中煎制，鸡皮面煎至金黄酥脆，锅中发出滋滋声",
+            "raw-prep": "生鸡排放在案板上，表面有简单腌制痕迹，旁边有调料碗",
+            "table-plating": "煎好的鸡排放在餐盘中，表面金黄，搭配简单蔬菜",
+            "cross-section": "切开鸡排，展示内部嫩滑的肉质纹理，肉汁充盈"
+          }
+        },
+        fish: {
+          name: "鱼排",
+          en: "fish fillet",
+          emoji: "🐟",
+          desc: "一块白身鱼排，表面煎至微黄，鱼肉洁白嫩滑，质地细腻",
+          sceneVariants: {
+            "pan-fry": "在平底锅中用少量油煎制，鱼皮面微焦酥脆，鱼肉洁白可见",
+            "raw-prep": "生鱼排放在案板上，表面有简单调味，旁边有柠檬片和香草",
+            "table-plating": "煎好的鱼排放在餐盘中，鱼肉洁白，搭配清爽配菜",
+            "cross-section": "用筷子轻轻拨开鱼肉，展示内部洁白嫩滑的质地"
+          }
+        }
+      },
+
+      // —— 场景 ——
+      scenes: {
+        "pan-fry": {
+          name: "厨房煎制图",
+          desc: "家庭厨房台面，自然光从窗户照入，普通家用不粘锅或平底锅，锅中有少量食用油，食材在锅中煎制，背景有厨房常见物品（调料瓶、砧板、抹布等），画面真实不刻意"
+        },
+        "raw-prep": {
+          name: "生鲜备菜图",
+          desc: "厨房操作台，食材处于生鲜状态，案板上有待处理的食材，旁边有简单调料和工具，画面呈现准备烹饪前的真实备菜状态"
+        },
+        "table-plating": {
+          name: "餐桌成品图",
+          desc: "家常餐桌场景，普通家用餐具，自然光线或暖色家庭灯光，食物已装盘上桌，画面呈现日常用餐的真实氛围"
+        },
+        "cross-section": {
+          name: "截面/夹起细节图",
+          desc: "特写视角，用筷子或餐具夹起食物，或展示食物切开后的截面，突出食材内部质感和熟度"
+        }
+      },
+
+      // —— 包装规则 ——
+      packaging: {
+        "flat-box": {
+          name: "平放盒装包装",
+          desc: "透明塑料托盒平放在台面上，包装盒透明部分展示内部产品，包装在画面中自然放置"
+        },
+        "open-bag": {
+          name: "已开封袋装包装",
+          desc: "已开封的软包装袋，袋口自然敞开，可以看到内部取出的产品，包装袋材质柔软有自然褶皱"
+        },
+        "soft-bag": {
+          name: "软袋包装",
+          desc: "软质包装袋平放或半立放置，包装袋有自然折叠和柔软质感，不刻意摆正"
+        },
+        "no-readable-text": {
+          name: "不显示可读包装文字",
+          desc: "包装上的文字信息处于模糊状态或背对镜头，不出现可识别的品牌文字和商品信息"
+        }
+      },
+
+      // —— 配菜策略 ——
+      sides: {
+        "scattered": {
+          name: "配菜较丰富但分散",
+          desc: "多种配菜（简单蔬菜、香草、酱汁小碟）分散在餐盘各处，每种独立呈现，不混合堆叠"
+        },
+        "small-portion": {
+          name: "每种配菜小份量",
+          desc: "配菜以小份量点缀为主，不喧宾夺主，保持主菜的视觉重心"
+        },
+        "not-piled": {
+          name: "不集中堆成满满一盘",
+          desc: "食物在盘中留有空间，不堆叠过高，呈现自然随意的摆放"
+        },
+        "no-healthy-bowl": {
+          name: "不形成商业健康餐拼盘感",
+          desc: "避免整齐分格的健康餐摆盘方式，保持家常自然的食物呈现"
+        }
+      }
+    };
+
+    // ============================================================
+    // 2. 组装模板 — 产品×场景的组合配置
+    // ============================================================
+    const FOOD_TEMPLATES = [
+      {
+        id: "tpl-1",
+        name: "牛排｜厨房煎制图",
+        product: "steak",
+        scene: "pan-fry",
+        packaging: ["flat-box", "no-readable-text"],
+        sides: ["scattered", "small-portion"]
+      },
+      {
+        id: "tpl-2",
+        name: "鸡排｜厨房煎制图",
+        product: "chicken",
+        scene: "pan-fry",
+        packaging: ["open-bag", "soft-bag", "no-readable-text"],
+        sides: ["scattered", "small-portion"]
+      },
+      {
+        id: "tpl-3",
+        name: "鸡排｜生鲜备菜图",
+        product: "chicken",
+        scene: "raw-prep",
+        packaging: ["open-bag", "soft-bag", "no-readable-text"],
+        sides: ["scattered", "small-portion"]
+      }
+    ];
+
+    // ============================================================
+    // 3. 状态
+    // ============================================================
+    const state = {
+      product: null,       // string id
+      scene: null,         // string id
+      packaging: new Set(), // Set of ids
+      sides: new Set()     // Set of ids
+    };
+
+    // ============================================================
+    // 4. DOM refs
+    // ============================================================
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => document.querySelectorAll(sel);
+
+    const productSelector = $("#product-selector");
+    const sceneSelector = $("#scene-selector");
+    const packagingSelector = $("#packaging-selector");
+    const sidesSelector = $("#sides-selector");
+    const promptPreview = $("#prompt-preview");
+    const btnCopy = $("#btn-copy");
+    const btnReset = $("#btn-reset");
+    const templateHint = $("#template-hint");
+    const layerBreakdown = $("#layer-breakdown");
+    const toastEl = $("#toast");
+
+    // ============================================================
+    // 5. 工具函数
+    // ============================================================
+    function escapeHtml(str) {
+      const div = document.createElement("div");
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function showToast(msg) {
+      toastEl.textContent = msg;
+      toastEl.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => toastEl.classList.remove("show"), 2000);
+    }
+
+    // ============================================================
+    // 6. 渲染选择器
+    // ============================================================
+    function renderProductSelector() {
+      const products = FOOD_MODULES.products;
+      productSelector.innerHTML = Object.entries(products).map(([id, p]) =>
+        `<button type="button" class="chip ${state.product === id ? "selected" : ""}" data-product="${id}">
+          <span class="chip-check">✓</span>
+          <span class="chip-emoji">${p.emoji}</span>
+          ${escapeHtml(p.name)}
+        </button>`
+      ).join("");
+
+      productSelector.querySelectorAll("[data-product]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-product");
+          state.product = state.product === id ? null : id;
+          renderProductSelector();
+          onSelectionChange();
+        });
+      });
+    }
+
+    function renderSceneSelector() {
+      const scenes = FOOD_MODULES.scenes;
+      sceneSelector.innerHTML = Object.entries(scenes).map(([id, s]) =>
+        `<button type="button" class="chip ${state.scene === id ? "selected" : ""}" data-scene="${id}">
+          <span class="chip-check">✓</span>
+          ${escapeHtml(s.name)}
+        </button>`
+      ).join("");
+
+      sceneSelector.querySelectorAll("[data-scene]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-scene");
+          state.scene = state.scene === id ? null : id;
+          renderSceneSelector();
+          onSelectionChange();
+        });
+      });
+    }
+
+    function renderPackagingSelector() {
+      const items = FOOD_MODULES.packaging;
+      packagingSelector.innerHTML = Object.entries(items).map(([id, p]) =>
+        `<button type="button" class="chip multi ${state.packaging.has(id) ? "selected" : ""}" data-packaging="${id}">
+          <span class="chip-check">✓</span>
+          ${escapeHtml(p.name)}
+        </button>`
+      ).join("");
+
+      packagingSelector.querySelectorAll("[data-packaging]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-packaging");
+          if (state.packaging.has(id)) {
+            state.packaging.delete(id);
+          } else {
+            state.packaging.add(id);
+          }
+          renderPackagingSelector();
+          onSelectionChange();
+        });
+      });
+    }
+
+    function renderSidesSelector() {
+      const items = FOOD_MODULES.sides;
+      sidesSelector.innerHTML = Object.entries(items).map(([id, s]) =>
+        `<button type="button" class="chip multi ${state.sides.has(id) ? "selected" : ""}" data-sides="${id}">
+          <span class="chip-check">✓</span>
+          ${escapeHtml(s.name)}
+        </button>`
+      ).join("");
+
+      sidesSelector.querySelectorAll("[data-sides]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-sides");
+          if (state.sides.has(id)) {
+            state.sides.delete(id);
+          } else {
+            state.sides.add(id);
+          }
+          renderSidesSelector();
+          onSelectionChange();
+        });
+      });
+    }
+
+    // ============================================================
+    // 7. 匹配模板 & 组装 prompt
+    // ============================================================
+    function findMatchingTemplate() {
+      if (!state.product || !state.scene) return null;
+
+      // 优先精确匹配 product + scene
+      let match = FOOD_TEMPLATES.find(t => t.product === state.product && t.scene === state.scene);
+      if (match) return match;
+
+      // 回退：只匹配 product
+      match = FOOD_TEMPLATES.find(t => t.product === state.product);
+      return match || null;
+    }
+
+    function assemblePrompt() {
+      if (!state.product || !state.scene) {
+        promptPreview.value = "";
+        templateHint.textContent = "请先选择产品和场景";
+        renderLayerBreakdown();
+        return;
+      }
+
+      const prod = FOOD_MODULES.products[state.product];
+      const scn = FOOD_MODULES.scenes[state.scene];
+      const template = findMatchingTemplate();
+
+      if (template) {
+        templateHint.textContent = `已匹配模板：${template.name}`;
+      } else {
+        templateHint.textContent = "自由组合（无精确匹配模板）";
+      }
+
+      // 组装各层
+      const layers = [];
+
+      // 1. 真实生活感底色层
+      layers.push({ name: "真实生活感底色层", text: FOOD_MODULES.realism });
+
+      // 2. 场景层
+      layers.push({ name: "场景层", text: scn.desc });
+
+      // 3. 产品主体识别层
+      let productText = prod.desc;
+      if (prod.sceneVariants && prod.sceneVariants[state.scene]) {
+        productText += "，" + prod.sceneVariants[state.scene];
+      }
+      layers.push({ name: "产品主体识别层", text: productText });
+
+      // 4. 配菜/辅料层
+      const sidesText = state.sides.size > 0
+        ? [...state.sides].map(id => FOOD_MODULES.sides[id].desc).join("；")
+        : "（未选择配菜策略）";
+      layers.push({ name: "配菜/辅料层", text: sidesText });
+
+      // 5. 包装植入层
+      const packagingText = state.packaging.size > 0
+        ? [...state.packaging].map(id => FOOD_MODULES.packaging[id].desc).join("；")
+        : "（未选择包装类型）";
+      layers.push({ name: "包装植入层", text: packagingText });
+
+      // 6. 负向约束层
+      layers.push({ name: "负向约束层", text: FOOD_MODULES.negative });
+
+      // 组装完整 prompt
+      const fullPrompt = layers.map(l => l.text).filter(t => t).join("\n\n");
+      promptPreview.value = fullPrompt;
+
+      // 渲染各层明细
+      renderLayerBreakdown(layers);
+    }
+
+    // ============================================================
+    // 8. 渲染各层明细
+    // ============================================================
+    function renderLayerBreakdown(layers) {
+      if (!layers || layers.length === 0) {
+        layerBreakdown.innerHTML = `<div class="empty-state">选择产品和场景后，此处将显示各层内容明细</div>`;
+        return;
+      }
+
+      layerBreakdown.innerHTML = layers.map((layer, i) =>
+        `<div class="layer-item">
+          <button type="button" class="layer-header ${i === 0 ? "open" : ""}" data-layer-index="${i}">
+            <span class="layer-arrow">▶</span>
+            <span class="layer-name">${escapeHtml(layer.name)}</span>
+            <span class="layer-status">${layer.text.length > 30 ? layer.text.slice(0, 30) + "…" : layer.text}</span>
+          </button>
+          <div class="layer-body ${i === 0 ? "open" : ""}">${escapeHtml(layer.text)}</div>
+        </div>`
+      ).join("");
+
+      layerBreakdown.querySelectorAll(".layer-header").forEach((header) => {
+        header.addEventListener("click", () => {
+          const idx = header.getAttribute("data-layer-index");
+          const body = layerBreakdown.querySelectorAll(".layer-body")[idx];
+          const isOpen = header.classList.toggle("open");
+          body.classList.toggle("open");
+        });
+      });
+    }
+
+    // ============================================================
+    // 9. 选择变更回调
+    // ============================================================
+    function onSelectionChange() {
+      assemblePrompt();
+    }
+
+    // ============================================================
+    // 10. 复制功能
+    // ============================================================
+    async function copyPrompt() {
+      const text = promptPreview.value.trim();
+      if (!text) {
+        showToast("请先选择产品和场景生成 prompt");
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+
+      btnCopy.textContent = "✅ 已复制";
+      btnCopy.classList.add("copied");
+      setTimeout(() => {
+        btnCopy.textContent = "📋 复制 Prompt";
+        btnCopy.classList.remove("copied");
+      }, 1500);
+      showToast("已复制到剪贴板");
+    }
+
+    // ============================================================
+    // 11. 重置
+    // ============================================================
+    function resetAll() {
+      state.product = null;
+      state.scene = null;
+      state.packaging.clear();
+      state.sides.clear();
+      renderProductSelector();
+      renderSceneSelector();
+      renderPackagingSelector();
+      renderSidesSelector();
+      promptPreview.value = "";
+      templateHint.textContent = "未匹配模板";
+      layerBreakdown.innerHTML = `<div class="empty-state">选择产品和场景后，此处将显示各层内容明细</div>`;
+    }
+
+    // ============================================================
+    // 12. 初始化
+    // ============================================================
+    function init() {
+      renderProductSelector();
+      renderSceneSelector();
+      renderPackagingSelector();
+      renderSidesSelector();
+      layerBreakdown.innerHTML = `<div class="empty-state">选择产品和场景后，此处将显示各层内容明细</div>`;
+
+      btnCopy.addEventListener("click", copyPrompt);
+      btnReset.addEventListener("click", resetAll);
+    }
+
+    init();
+  </script>
+</body>
+</html>
