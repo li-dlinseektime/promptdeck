@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>食品 AIGC 提示词库 — PromptDeck</title>
+  <title>Food Prompt Library — PromptDeck</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -39,18 +39,17 @@
     }
 
     .app {
-      max-width: 1120px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 32px 40px 80px;
+      padding: 28px 32px 64px;
     }
 
-    /* —— Header —— */
     .header {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 32px;
-      padding-bottom: 24px;
+      margin-bottom: 28px;
+      padding-bottom: 20px;
       border-bottom: 1px solid var(--divider);
     }
 
@@ -88,17 +87,34 @@
       color: var(--text);
     }
 
-    .header-title .sub {
-      display: block;
-      font-size: 0.78rem;
-      font-weight: 400;
+    .info-note {
+      font-size: 0.82rem;
       color: var(--text-muted);
-      margin-top: 3px;
+      line-height: 1.6;
+      padding: 12px 16px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      margin-bottom: 24px;
     }
 
-    /* —— Section —— */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .left-panel {
+      position: sticky;
+      top: 24px;
+    }
+
+    .right-panel {
+      min-width: 0;
+    }
+
     .section {
-      margin-bottom: 32px;
+      margin-bottom: 24px;
     }
 
     .section-label {
@@ -110,28 +126,14 @@
       margin-bottom: 10px;
     }
 
-    /* —— Info Note —— */
-    .info-note {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      line-height: 1.6;
-      padding: 12px 16px;
-      background: var(--surface);
-      border-radius: var(--radius);
-      margin-bottom: 24px;
-    }
-
-    /* —— Template Cards —— */
-    .template-grid {
+    .suite-grid {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
       gap: 8px;
     }
 
-    .template-card {
-      flex: 1;
-      min-width: 200px;
-      padding: 12px 14px;
+    .suite-card {
+      padding: 14px 16px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -141,46 +143,42 @@
       position: relative;
     }
 
-    .template-card:hover {
+    .suite-card:hover {
       background: rgba(55, 53, 47, 0.04);
       border-color: var(--border-strong);
     }
 
-    .template-card:active {
+    .suite-card:active {
       transform: scale(0.98);
     }
 
-    .template-card .tpl-name {
-      font-size: 0.85rem;
+    .suite-card.is-active {
+      border-color: rgba(35, 131, 226, 0.20);
+      background: rgba(35, 131, 226, 0.04);
+    }
+
+    .suite-card .suite-name {
+      font-size: 0.88rem;
       font-weight: 600;
       color: var(--text);
-      margin-bottom: 3px;
+      margin-bottom: 6px;
     }
 
-    .template-card .tpl-desc {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      line-height: 1.4;
+    .suite-card .suite-scenes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
     }
 
-    .template-card .tpl-badge {
-      display: inline-block;
-      margin-top: 6px;
-      font-size: 0.65rem;
-      font-weight: 500;
+    .suite-card .suite-scene-chip {
+      font-size: 0.68rem;
       padding: 2px 7px;
       border-radius: var(--radius-sm);
       background: var(--tag-bg);
       color: var(--text-muted);
-      transition: background 0.12s, color 0.12s;
     }
 
-    .template-card:hover .tpl-badge {
-      background: var(--accent-bg);
-      color: var(--accent-text);
-    }
-
-    .template-card .tpl-active {
+    .suite-card .suite-active-badge {
       display: none;
       position: absolute;
       top: 8px;
@@ -193,45 +191,29 @@
       color: var(--accent-text);
     }
 
-    .template-card.is-active {
-      border-color: rgba(35, 131, 226, 0.20);
-      background: rgba(35, 131, 226, 0.04);
-    }
-
-    .template-card.is-active .tpl-active {
+    .suite-card.is-active .suite-active-badge {
       display: inline-block;
     }
 
-    .template-card.is-active .tpl-badge {
-      background: var(--tag-bg);
-      color: var(--text-muted);
-    }
-
-    /* —— Config Panel —— */
     .config-panel {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 20px 20px 8px;
+      padding: 16px 16px 4px;
     }
 
     .config-group {
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .config-group-label {
       font-size: 0.72rem;
       font-weight: 600;
       color: var(--text-muted);
-      margin-bottom: 8px;
+      margin-bottom: 7px;
       display: flex;
       align-items: center;
       gap: 6px;
-    }
-
-    .config-group-label .group-num {
-      font-weight: 500;
-      color: var(--text-light);
     }
 
     .config-group-label .group-hint {
@@ -240,20 +222,19 @@
       font-size: 0.68rem;
     }
 
-    /* —— Chip Selector —— */
     .chip-grid {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 5px;
     }
 
     .chip {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      padding: 6px 12px;
+      gap: 4px;
+      padding: 5px 10px;
       font-family: inherit;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: var(--text);
       background: var(--bg);
       border: 1px solid var(--border);
@@ -275,11 +256,6 @@
       font-weight: 500;
     }
 
-    .chip .chip-emoji {
-      font-size: 1rem;
-      line-height: 1;
-    }
-
     .chip .chip-check {
       display: none;
       font-size: 0.65rem;
@@ -291,11 +267,40 @@
       display: inline;
     }
 
-    /* —— Module Preview —— */
+    .packaging-hint {
+      font-size: 0.72rem;
+      color: #b8860b;
+      margin-top: 6px;
+      padding: 4px 8px;
+      background: rgba(184, 134, 11, 0.06);
+      border-radius: var(--radius-sm);
+      display: none;
+    }
+
+    .packaging-hint.visible {
+      display: block;
+    }
+
+    .composition-summary {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      padding: 10px 14px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .composition-summary strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
     .module-grid {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
+      margin-bottom: 20px;
     }
 
     .module-card {
@@ -313,8 +318,8 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 10px 14px;
-      font-size: 0.82rem;
+      padding: 9px 12px;
+      font-size: 0.8rem;
       font-weight: 500;
       color: var(--text);
       background: var(--bg);
@@ -328,11 +333,11 @@
     }
 
     .module-card-header .mc-toggle {
-      font-size: 0.6rem;
+      font-size: 0.55rem;
       color: var(--text-light);
       transition: transform 0.15s;
       flex-shrink: 0;
-      width: 14px;
+      width: 12px;
       text-align: center;
     }
 
@@ -345,30 +350,25 @@
     }
 
     .module-card-header .mc-tag {
-      font-size: 0.62rem;
+      font-size: 0.6rem;
       font-weight: 500;
-      padding: 1px 7px;
+      padding: 1px 6px;
       border-radius: var(--radius-sm);
       background: var(--tag-bg);
       color: var(--text-muted);
     }
 
     .module-card-body {
-      padding: 0 14px 12px;
-      font-size: 0.82rem;
+      padding: 0 12px 10px;
+      font-size: 0.8rem;
       color: var(--text-muted);
-      line-height: 1.7;
+      line-height: 1.65;
       white-space: pre-wrap;
       background: var(--bg);
     }
 
     .module-card-body.collapsed {
       display: none;
-    }
-
-    /* —— Preview Area —— */
-    .preview-area {
-      margin-top: 4px;
     }
 
     .preview-toolbar {
@@ -423,18 +423,18 @@
 
     .preview-box {
       width: 100%;
-      min-height: 160px;
-      max-height: 340px;
+      min-height: 140px;
+      max-height: 300px;
       resize: vertical;
       font-family: "SF Mono", "Cascadia Code", "Consolas", "Liberation Mono", monospace;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: var(--text);
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 14px 16px;
+      padding: 12px 14px;
       outline: none;
-      line-height: 1.65;
+      line-height: 1.6;
       white-space: pre-wrap;
       transition: border-color 0.12s;
     }
@@ -447,7 +447,6 @@
       color: var(--text-muted);
     }
 
-    /* —— Toast —— */
     .toast {
       position: fixed;
       bottom: 24px;
@@ -470,164 +469,102 @@
       opacity: 1;
     }
 
-    /* —— Responsive —— */
-    @media (max-width: 720px) {
+    @media (max-width: 900px) {
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+      .left-panel {
+        position: static;
+      }
       .app {
-        padding: 24px 20px 64px;
-      }
-      .header {
-        flex-wrap: wrap;
-      }
-      .template-grid {
-        flex-direction: column;
-      }
-      .template-card {
-        min-width: unset;
-      }
-      .config-panel {
-        padding: 16px 14px 4px;
-      }
-      .preview-toolbar {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .preview-toolbar .char-count {
-        margin-right: 0;
-        text-align: center;
+        padding: 24px 20px 48px;
       }
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <!-- Header -->
     <div class="header">
-      <a class="header-back" href="../index.html">← 返回</a>
+      <a class="header-back" href="../index.html">← Back</a>
       <div class="header-title">
-        <h1>🍽️ 食品 AIGC 提示词库</h1>
-        <span class="sub">模块化提示词工作台</span>
+        <h1>Food Prompt Library</h1>
       </div>
     </div>
 
-    <!-- Info Note -->
     <div class="info-note">
-      将食品图像生成 prompt 拆分为产品、场景、包装、配菜和负向约束模块，便于快速复用与迭代。
+      Modular prompt system for food image generation.
     </div>
 
-    <!-- Quick Templates -->
-    <div class="section">
-      <div class="section-label">⚡ 常用模板</div>
-      <div class="template-grid" id="template-grid"></div>
-    </div>
-
-    <!-- Config Panel -->
-    <div class="section">
-      <div class="config-panel">
-        <div class="config-group">
-          <div class="config-group-label">
-            <span class="group-num">①</span> 选择产品
-          </div>
-          <div class="chip-grid" id="product-selector"></div>
+    <div class="workspace-grid">
+      <div class="left-panel">
+        <div class="section">
+          <div class="section-label">产品套组</div>
+          <div class="suite-grid" id="suite-grid"></div>
         </div>
 
-        <div class="config-group">
-          <div class="config-group-label">
-            <span class="group-num">②</span> 选择场景
-          </div>
-          <div class="chip-grid" id="scene-selector"></div>
-        </div>
+        <div class="section">
+          <div class="config-panel">
+            <div class="config-group">
+              <div class="config-group-label">当前场景</div>
+              <div class="chip-grid" id="scene-selector"></div>
+            </div>
 
-        <div class="config-group">
-          <div class="config-group-label">
-            <span class="group-num">③</span> 包装类型
-            <span class="group-hint">可多选</span>
-          </div>
-          <div class="chip-grid" id="packaging-selector"></div>
-        </div>
+            <div class="config-group">
+              <div class="config-group-label">
+                包装类型
+                <span class="group-hint">可多选</span>
+              </div>
+              <div class="chip-grid" id="packaging-selector"></div>
+              <div class="packaging-hint" id="packaging-hint">鱼排包装尚未充分测试，建议使用无包装配置。</div>
+            </div>
 
-        <div class="config-group">
-          <div class="config-group-label">
-            <span class="group-num">④</span> 配菜策略
-            <span class="group-hint">可多选</span>
+            <div class="config-group">
+              <div class="config-group-label">配菜策略</div>
+              <div class="chip-grid" id="sides-selector"></div>
+            </div>
           </div>
-          <div class="chip-grid" id="sides-selector"></div>
         </div>
       </div>
-    </div>
 
-    <!-- Module Preview -->
-    <div class="section">
-      <div class="section-label">⑤ 模块预览</div>
-      <div class="module-grid" id="module-grid"></div>
-    </div>
+      <div class="right-panel">
+        <div class="composition-summary" id="composition-summary"></div>
 
-    <!-- Final Prompt Preview -->
-    <div class="section preview-area">
-      <div class="section-label">⑥ 最终 Prompt</div>
-      <div class="preview-toolbar">
-        <span class="char-count" id="char-count">0 字符</span>
-        <button type="button" class="toolbar-btn primary" id="btn-copy">📋 复制</button>
-        <button type="button" class="toolbar-btn" id="btn-reset">重置默认</button>
+        <div class="section">
+          <div class="section-label">模块预览</div>
+          <div class="module-grid" id="module-grid"></div>
+        </div>
+
+        <div class="section">
+          <div class="section-label">最终 Prompt</div>
+          <div class="preview-toolbar">
+            <span class="char-count" id="char-count">0 字符</span>
+            <button type="button" class="toolbar-btn primary" id="btn-copy">复制</button>
+            <button type="button" class="toolbar-btn" id="btn-reset">重置默认</button>
+          </div>
+          <textarea class="preview-box" id="prompt-preview" placeholder="选择产品套组和场景后自动生成。" readonly></textarea>
+        </div>
       </div>
-      <textarea class="preview-box" id="prompt-preview" placeholder="选择产品与场景后，此处将自动生成组装好的 prompt…" readonly></textarea>
     </div>
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
-    // ============================================================
-    // 1. 模块库
-    // ============================================================
     const FOOD_MODULES = {
-      // 0. 通用真实生活感底色层
       globalBase: {
         realism: "真实中国年轻家庭日常场景，使用 iPhone 随手拍摄。画面应像真实家长在做饭或吃饭过程中顺手记录，而不是专业摄影、商业美食图或电商主图。环境干净整洁但有轻微生活痕迹，不是样板间。使用真实家庭自然光或室内暖光，光线不均匀，有方向性，带有轻微手机 HDR 感。构图自然，不追求居中、对称或精致摆拍。3:4 竖版。不要文字、水印、logo、界面元素。"
       },
-
-      // 1. 四类场景骨架
       scenes: {
-        kitchenCooking: {
-          name: "厨房煎制图",
-          desc: "画面主体正在普通家用平底锅中煎制，锅放在日常使用的燃气灶或电磁炉上。一个家长一只手自然拿着夹子，正在翻动或检查熟度，动作发生在真实做饭过程中，不是摆拍。背景为普通中国家庭厨房，浅色台面、常见瓷砖墙面、普通锅具和厨房用品自然存在。整体像做饭途中顺手拍下的一张生活照片。"
-        },
-        rawPrep: {
-          name: "生鲜备菜图",
-          desc: "使用参考图中的厨房环境，生成一张看起来像同一个家长在同一次做饭过程中、使用同一部 iPhone 拍摄的照片。画面主体是未烹饪的生鲜主菜，放在普通家用陶瓷盘、砧板或厨房台面上。旁边自然出现少量备料元素，例如夹子、厨房纸、盐、黑胡椒、刀具或砧板中的 1–2 种。整体像准备下锅前顺手拍下的真实备菜状态，而不是商品展示图。"
-        },
-        tableFinished: {
-          name: "餐桌成品图",
-          desc: "画面主体是一份已经煎制完成的家常健康餐，放在普通家用餐盘中，准备开吃前顺手拍下。餐具和桌面应是普通中国家庭常见风格，环境干净整洁，有轻微生活痕迹但不杂乱。画面像家长准备吃饭前拍给小红书分享的真实生活照片，不像西餐厅摆盘，也不像商业宣传图。"
-        },
-        cutOrPickup: {
-          name: "截面/夹起细节图",
-          desc: "使用参考图中的餐桌环境，生成一张看起来像同一个家长在同一顿家庭晚餐过程中、使用同一部 iPhone 拍摄的照片。画面主体是已经煎好的主菜被筷子、叉子或餐具轻轻夹起一小块，或者被自然切开，露出内部真实纹理。构图可以比成品图稍微靠近主体，但仍然保留真实手机随手拍感，不要变成商业微距摄影。"
-        }
+        kitchenCooking: { name: "厨房煎制图", desc: "画面主体正在普通家用平底锅中煎制，锅放在日常使用的燃气灶或电磁炉上。一个家长一只手自然拿着夹子，正在翻动或检查熟度，动作发生在真实做饭过程中，不是摆拍。背景为普通中国家庭厨房，浅色台面、常见瓷砖墙面、普通锅具和厨房用品自然存在。整体像做饭途中顺手拍下的一张生活照片。" },
+        rawPrep: { name: "生鲜备菜图", desc: "使用参考图中的厨房环境，生成一张看起来像同一个家长在同一次做饭过程中、使用同一部 iPhone 拍摄的照片。画面主体是未烹饪的生鲜主菜，放在普通家用陶瓷盘、砧板或厨房台面上。旁边自然出现少量备料元素，例如夹子、厨房纸、盐、黑胡椒、刀具或砧板中的 1–2 种。整体像准备下锅前顺手拍下的真实备菜状态，而不是商品展示图。" },
+        tableFinished: { name: "餐桌成品图", desc: "画面主体是一份已经煎制完成的家常健康餐，放在普通家用餐盘中，准备开吃前顺手拍下。餐具和桌面应是普通中国家庭常见风格，环境干净整洁，有轻微生活痕迹但不杂乱。画面像家长准备吃饭前拍给小红书分享的真实生活照片，不像西餐厅摆盘，也不像商业宣传图。" },
+        cutOrPickup: { name: "截面/夹起细节图", desc: "使用参考图中的餐桌环境，生成一张看起来像同一个家长在同一顿家庭晚餐过程中、使用同一部 iPhone 拍摄的照片。画面主体是已经煎好的主菜被筷子、叉子或餐具轻轻夹起一小块，或者被自然切开，露出内部真实纹理。构图可以比成品图稍微靠近主体，但仍然保留真实手机随手拍感，不要变成商业微距摄影。" }
       },
-
-      // 2. 产品主体识别层 + 产品专属负向约束
       products: {
-        steak: {
-          name: "牛排",
-          emoji: "🥩",
-          identity: "牛排应呈现为中国年轻家庭日常会购买的普通厚度家常牛排，厚度适中偏薄，不是 steakhouse 风格的厚切牛排，也不要显得过大过厚。表面应呈现自然煎痕和轻微出汁，烹饪方式偏少油、清爽，不使用厚重酱汁，不表现重油、重口或油腻感。整体气质是高蛋白、少油、清爽、营养均衡的家庭健康餐。",
-          negatives: "不要厚切牛排，不要 steakhouse 风格，不要西餐厅精致牛排摆盘，不要过大过厚，不要强烈黄油煎封感。"
-        },
-        chicken: {
-          name: "鸡排",
-          emoji: "🍗",
-          identity: "鸡排应呈现为中国年轻家庭日常会购买的普通家常鸡排，大小适中，厚度适中偏薄，像日常家庭做健康餐时会使用的鸡排。应表现真实鸡肉质感，表面有自然鸡肉纹理和轻微煎痕。烹饪后呈浅金黄到淡金棕色的家常煎制状态，不是油炸感、裹粉感、重油感或快餐感。",
-          negatives: "不要炸鸡排，不要鸡柳，不要鸡米花，不要裹粉炸物，不要快餐感，不要牛排、鱼排或西餐厅精致鸡排摆盘。"
-        },
-        fish: {
-          name: "鱼排",
-          emoji: "🐟",
-          identity: "鱼排应保持为一整块家常巴沙鱼排的外观特征。煎制时表面有轻微金黄煎痕和自然鱼肉质感，整体清爽低脂，不做成裹粉油炸或深油炸效果。生鲜状态下应呈现自然浅色鱼肉质感，不要像鸡胸肉、牛排或炸鱼排。截面应表现柔嫩、洁白、真实的鱼肉纹理。",
-          negatives: "不要炸鱼块，不要鱼柳条，不要鸡排，不要牛排，不要鸡胸肉，不要裹粉油炸鱼排，不要西餐厅精致鱼排摆盘。"
-        }
+        steak: { name: "牛排", emoji: "🥩", identity: "牛排应呈现为中国年轻家庭日常会购买的普通厚度家常牛排，厚度适中偏薄，不是 steakhouse 风格的厚切牛排，也不要显得过大过厚。表面应呈现自然煎痕和轻微出汁，烹饪方式偏少油、清爽，不使用厚重酱汁，不表现重油、重口或油腻感。整体气质是高蛋白、少油、清爽、营养均衡的家庭健康餐。", negatives: "不要厚切牛排，不要 steakhouse 风格，不要西餐厅精致牛排摆盘，不要过大过厚，不要强烈黄油煎封感。" },
+        chicken: { name: "鸡排", emoji: "🍗", identity: "鸡排应呈现为中国年轻家庭日常会购买的普通家常鸡排，大小适中，厚度适中偏薄，像日常家庭做健康餐时会使用的鸡排。应表现真实鸡肉质感，表面有自然鸡肉纹理和轻微煎痕。烹饪后呈浅金黄到淡金棕色的家常煎制状态，不是油炸感、裹粉感、重油感或快餐感。", negatives: "不要炸鸡排，不要鸡柳，不要鸡米花，不要裹粉炸物，不要快餐感，不要牛排、鱼排或西餐厅精致鸡排摆盘。" },
+        fish: { name: "鱼排", emoji: "🐟", identity: "鱼排应保持为一整块家常巴沙鱼排的外观特征。煎制时表面有轻微金黄煎痕和自然鱼肉质感，整体清爽低脂，不做成裹粉油炸或深油炸效果。生鲜状态下应呈现自然浅色鱼肉质感，不要像鸡胸肉、牛排或炸鱼排。截面应表现柔嫩、洁白、真实的鱼肉纹理。", negatives: "不要炸鱼块，不要鱼柳条，不要鸡排，不要牛排，不要鸡胸肉，不要裹粉油炸鱼排，不要西餐厅精致鱼排摆盘。" }
       },
-
-      // 3. 产品 × 场景特化层
       productSceneOverrides: {
         steak: {
           kitchenCooking: "画面主体是一块家常牛排正在普通家用平底锅中煎制。牛排表面开始自然上色，边缘微微焦香，锅中只有少量薄薄的油膜。牛排表面应是自然轻微出汁和清爽煎痕，而不是油亮、厚重油润或浸在油里的状态。",
@@ -648,55 +585,23 @@
           cutOrPickup: "画面主体是一块已经煎好的巴沙鱼排，被筷子、叉子或餐具轻轻夹起一小块，或者鱼排被自然切开，露出内部柔嫩、洁白、真实的鱼肉纹理。表面有轻微金黄煎痕，内部呈现自然鱼肉纤维和柔嫩质感。"
         }
       },
-
-      // 4. 配菜与辅料策略
       sideDishStrategies: {
-        basic: {
-          name: "基础健康餐配菜",
-          desc: "背景中自然出现少量家常配菜或备菜痕迹，配菜与辅料不应只表现为固定摆盘配菜，还应体现真实烹饪过程中的自然食材搭配。成品型健康餐配菜可从西兰花、小土豆、胡萝卜、玉米段、芦笋、小番茄、南瓜块、蘑菇、水煮蛋半颗、藜麦、糙米或少量叶菜中自然组合，分量适中，摆放自然随意。"
-        },
-        richDispersed: {
-          name: "丰富但分散",
-          desc: "背景中自然出现较丰富的健康餐备菜和烹饪痕迹，但这些食材应分散在台面、盘子、砧板或锅边的不同位置，不要集中堆成一大盘。成品型健康餐配菜可以出现 4–6 种，每种配菜数量克制，像真实家庭备菜时顺手放在旁边的小份量，而不是满满一盘展示型健康餐。配菜之间应有空间间隔，部分可以被遮挡、虚化或位于画面边缘，不需要全部清晰完整展示。"
-        },
-        tableFinished: {
-          name: "餐桌成品型",
-          desc: "餐桌上的配菜与辅料应体现真实家庭健康餐的上桌状态，以成品型健康餐配菜为主，同时保留少量真实烹饪痕迹，而不是只有单一固定摆盘。主菜旁自然搭配 2–3 种成品型健康餐配菜，分量适中，摆放自然随意，不对称，不精致摆拍。"
-        },
-        cutContinuity: {
-          name: "截面/夹起连续性",
-          desc: "餐盘中可自然看到上一张图中的部分健康餐配菜，部分可被遮挡或位于画面边缘，不需要全部清晰展示。也可以少量保留 1–2 种烹饪型辅料痕迹，低调出现在盘边或主菜旁，保持同一顿健康餐的连续性。"
-        }
+        basic: { name: "基础健康餐配菜", desc: "背景中自然出现少量家常配菜或备菜痕迹，配菜与辅料不应只表现为固定摆盘配菜，还应体现真实烹饪过程中的自然食材搭配。成品型健康餐配菜可从西兰花、小土豆、胡萝卜、玉米段、芦笋、小番茄、南瓜块、蘑菇、水煮蛋半颗、藜麦、糙米或少量叶菜中自然组合，分量适中，摆放自然随意。" },
+        richDispersed: { name: "丰富但分散", desc: "背景中自然出现较丰富的健康餐备菜和烹饪痕迹，但这些食材应分散在台面、盘子、砧板或锅边的不同位置，不要集中堆成一大盘。成品型健康餐配菜可以出现 4–6 种，每种配菜数量克制，像真实家庭备菜时顺手放在旁边的小份量，而不是满满一盘展示型健康餐。配菜之间应有空间间隔，部分可以被遮挡、虚化或位于画面边缘，不需要全部清晰完整展示。" },
+        tableFinished: { name: "餐桌成品型", desc: "餐桌上的配菜与辅料应体现真实家庭健康餐的上桌状态，以成品型健康餐配菜为主，同时保留少量真实烹饪痕迹，而不是只有单一固定摆盘。主菜旁自然搭配 2–3 种成品型健康餐配菜，分量适中，摆放自然随意，不对称，不精致摆拍。" },
+        cutContinuity: { name: "截面/夹起连续性", desc: "餐盘中可自然看到上一张图中的部分健康餐配菜，部分可被遮挡或位于画面边缘，不需要全部清晰展示。也可以少量保留 1–2 种烹饪型辅料痕迹，低调出现在盘边或主菜旁，保持同一顿健康餐的连续性。" }
       },
-
-      // 5. 产品专属辅料
       productSideDishes: {
         steak: "牛排辅料可自然搭配：洋葱切片、煎制大蒜、迷迭香、百里香、黑胡椒、蘑菇片、芦笋、小番茄、彩椒条、西葫芦片。黄油小块谨慎使用，必须强调少量、克制。",
         chicken: "鸡排辅料可自然搭配：蒜片、洋葱切片、黑胡椒、蘑菇片、少量彩椒条、西葫芦片、芦笋、小番茄、少量柠檬片、迷迭香、百里香。迷迭香和百里香不要过强，否则容易偏西式摆盘。",
         fish: "鱼排辅料可自然搭配：柠檬角、蒜片、少量姜片、黑胡椒、洋葱切片、欧芹或少量香草、西葫芦片、芦笋、小番茄、彩椒条、蘑菇片。鱼排辅料和牛排/鸡排差异明显，应保留产品特异性。"
       },
-
-      // 6. 包装植入层
       packagingStrategies: {
-        none: {
-          name: "无包装",
-          desc: "不出现产品包装。画面只保留真实家庭厨房或餐桌场景、主菜、配菜和少量日常用品。"
-        },
-        steakFlatBox: {
-          name: "牛排盒装包装，平放",
-          desc: "画面中允许自然出现产品包装，但包装只是厨房台面上的辅助道具，不是商品展示。包装必须平放在台面上，不能立着放，也不要斜靠墙面。包装应放在画面后侧或边缘位置，距离主体较远，处于自然背景虚化中，只呈现模糊的包装轮廓、黑色盒体、局部色块、开封痕迹或塑料托盘感，不显示可读文字。包装可以被盘子、配菜、锅具、砧板或台面边缘自然遮挡一部分。包装不在画面中心，不抢走正在烹饪或备菜的食物主体。"
-        },
-        chickenSoftBag: {
-          name: "鸡排袋装包装，平放",
-          desc: "画面中允许自然出现产品包装，但包装只是厨房台面上的辅助道具，不是商品展示。包装为已开封的袋装鸡排包装，应表现为软袋、包装袋、真空袋或自立袋一类的食品包装形式，而不是盒装托盘。包装必须平放在台面上，不能立着放，也不要斜靠墙面。包装应放在画面后侧或边缘位置，距离主体较远，处于自然背景虚化中，只呈现模糊的包装轮廓、配色和袋装质感，不显示可读文字。包装可以略微压扁、自然折叠、软塌、有开封痕迹，也可以被盘子、配菜、锅具、砧板或台面边缘自然遮挡一部分。只需要保留包装袋的大致外轮廓、局部橙色或暖色调色块、开封痕迹、袋装材质感和生活化存在感。"
-        },
-        noReadableText: {
-          name: "包装文字规避",
-          desc: "不要清晰展示品牌名、卖点文案、规格或任何小字。包装上的文字应自然不可读，避免出现清晰但错误的中文、伪文字、乱码或变形 logo。包装不可以正面朝向镜头，不要完整展示包装正面，也不要出现任何清晰可读的包装文字。包装上的文字区域应朝下、背向镜头、被折叠、被遮挡、反光过曝或处于背景虚化中。只需要让人感觉旁边有一个产品包装存在，不要看清文案、规格或任何小字。"
-        }
+        none: { name: "无包装", desc: "不出现产品包装。画面只保留真实家庭厨房或餐桌场景、主菜、配菜和少量日常用品。" },
+        steakFlatBox: { name: "牛排盒装包装，平放", desc: "画面中允许自然出现产品包装，但包装只是厨房台面上的辅助道具，不是商品展示。包装必须平放在台面上，不能立着放，也不要斜靠墙面。包装应放在画面后侧或边缘位置，距离主体较远，处于自然背景虚化中，只呈现模糊的包装轮廓、黑色盒体、局部色块、开封痕迹或塑料托盘感，不显示可读文字。包装可以被盘子、配菜、锅具、砧板或台面边缘自然遮挡一部分。包装不在画面中心，不抢走正在烹饪或备菜的食物主体。" },
+        chickenSoftBag: { name: "鸡排袋装包装，平放", desc: "画面中允许自然出现产品包装，但包装只是厨房台面上的辅助道具，不是商品展示。包装为已开封的袋装鸡排包装，应表现为软袋、包装袋、真空袋或自立袋一类的食品包装形式，而不是盒装托盘。包装必须平放在台面上，不能立着放，也不要斜靠墙面。包装应放在画面后侧或边缘位置，距离主体较远，处于自然背景虚化中，只呈现模糊的包装轮廓、配色和袋装质感，不显示可读文字。包装可以略微压扁、自然折叠、软塌、有开封痕迹，也可以被盘子、配菜、锅具、砧板或台面边缘自然遮挡一部分。只需要保留包装袋的大致外轮廓、局部橙色或暖色调色块、开封痕迹、袋装材质感和生活化存在感。" },
+        noReadableText: { name: "包装文字规避", desc: "不要清晰展示品牌名、卖点文案、规格或任何小字。包装上的文字应自然不可读，避免出现清晰但错误的中文、伪文字、乱码或变形 logo。包装不可以正面朝向镜头，不要完整展示包装正面，也不要出现任何清晰可读的包装文字。包装上的文字区域应朝下、背向镜头、被折叠、被遮挡、反光过曝或处于背景虚化中。只需要让人感觉旁边有一个产品包装存在，不要看清文案、规格或任何小字。" }
       },
-
-      // 7. 负向约束层
       negativeConstraints: {
         global: "不要广告图，不要电商主图，不要商业摄影风格，不要杂志感，不要精致摆盘，不要棚拍布光，不要文字、水印、logo、界面元素。不要脏乱厨房，不要油腻厨房，不要样板间感。不要把配菜集中堆成满满一盘，不要商业健康餐拼盘感。",
         oilControl: "不要重油，不要大量黄油，不要明显油汪汪的锅底，不要厚重酱汁，不要过度油润，不要浸在油里的状态。",
@@ -704,107 +609,34 @@
       }
     };
 
-
-    // ============================================================
-    // 2. 组装模板
-    // ============================================================
-    const FOOD_TEMPLATES = [
-      {
-        id: "tpl-1",
-        name: "牛排｜厨房煎制｜无包装",
-        product: "steak",
-        scene: "kitchenCooking",
-        sideDish: "richDispersed",
-        packaging: ["none"],
-        desc: "🥩 牛排 · 厨房煎制 · 无包装"
-      },
-      {
-        id: "tpl-2",
-        name: "牛排｜生鲜备菜｜无包装",
-        product: "steak",
-        scene: "rawPrep",
-        sideDish: "basic",
-        packaging: ["none"],
-        desc: "🥩 牛排 · 生鲜备菜 · 无包装"
-      },
-      {
-        id: "tpl-3",
-        name: "牛排｜厨房煎制｜平放盒装包装",
-        product: "steak",
-        scene: "kitchenCooking",
-        sideDish: "richDispersed",
-        packaging: ["steakFlatBox", "noReadableText"],
-        desc: "🥩 牛排 · 厨房煎制 · 盒装包装"
-      },
-      {
-        id: "tpl-4",
-        name: "牛排｜生鲜备菜｜平放盒装包装",
-        product: "steak",
-        scene: "rawPrep",
-        sideDish: "richDispersed",
-        packaging: ["steakFlatBox", "noReadableText"],
-        desc: "🥩 牛排 · 生鲜备菜 · 盒装包装"
-      },
-      {
-        id: "tpl-5",
-        name: "鸡排｜厨房煎制｜平放袋装包装",
-        product: "chicken",
-        scene: "kitchenCooking",
-        sideDish: "richDispersed",
-        packaging: ["chickenSoftBag", "noReadableText"],
-        desc: "🍗 鸡排 · 厨房煎制 · 袋装包装"
-      },
-      {
-        id: "tpl-6",
-        name: "鸡排｜生鲜备菜｜平放袋装包装",
-        product: "chicken",
-        scene: "rawPrep",
-        sideDish: "richDispersed",
-        packaging: ["chickenSoftBag", "noReadableText"],
-        desc: "🍗 鸡排 · 生鲜备菜 · 袋装包装"
-      }
-    ];
-
-
-    // ============================================================
-    // 3. 默认状态
-    // ============================================================
-    const DEFAULT_STATE = {
-      product: "steak",
-      scene: "kitchenCooking",
-      sideDish: "richDispersed",
-      packaging: new Set(["none"])
+    const PRODUCT_SUITES = {
+      steak: { name: "牛排四图套组", emoji: "🥩", product: "steak", scenes: ["kitchenCooking", "rawPrep", "tableFinished", "cutOrPickup"], defaultScene: "kitchenCooking", defaultSideDish: "richDispersed", defaultPackaging: ["none"] },
+      chicken: { name: "鸡排四图套组", emoji: "🍗", product: "chicken", scenes: ["kitchenCooking", "rawPrep", "tableFinished", "cutOrPickup"], defaultScene: "kitchenCooking", defaultSideDish: "richDispersed", defaultPackaging: ["none"] },
+      fish: { name: "鱼排四图套组", emoji: "🐟", product: "fish", scenes: ["kitchenCooking", "rawPrep", "tableFinished", "cutOrPickup"], defaultScene: "kitchenCooking", defaultSideDish: "richDispersed", defaultPackaging: ["none"] }
     };
 
-    const state = {
-      product: DEFAULT_STATE.product,
-      scene: DEFAULT_STATE.scene,
-      sideDish: DEFAULT_STATE.sideDish,
-      packaging: new Set(DEFAULT_STATE.packaging)
-    };
+    const SCENE_ORDER = ["kitchenCooking", "rawPrep", "tableFinished", "cutOrPickup"];
+    const SCENE_LABELS = { kitchenCooking: "01 厨房煎制", rawPrep: "02 生鲜备菜", tableFinished: "03 餐桌成品", cutOrPickup: "04 截面/夹起" };
 
+    const DEFAULT_STATE = { product: "steak", scene: "kitchenCooking", sideDish: "richDispersed", packaging: new Set(["none"]) };
+    const state = { product: DEFAULT_STATE.product, scene: DEFAULT_STATE.scene, sideDish: DEFAULT_STATE.sideDish, packaging: new Set(DEFAULT_STATE.packaging) };
 
-    // ============================================================
-    // 4. DOM refs
-    // ============================================================
     const $ = (sel) => document.querySelector(sel);
     const $$ = (sel) => document.querySelectorAll(sel);
 
-    const templateGrid = $("#template-grid");
-    const productSelector = $("#product-selector");
+    const suiteGrid = $("#suite-grid");
     const sceneSelector = $("#scene-selector");
     const packagingSelector = $("#packaging-selector");
     const sidesSelector = $("#sides-selector");
+    const packagingHint = $("#packaging-hint");
     const moduleGrid = $("#module-grid");
     const promptPreview = $("#prompt-preview");
     const charCount = $("#char-count");
+    const compositionSummary = $("#composition-summary");
     const btnCopy = $("#btn-copy");
     const btnReset = $("#btn-reset");
     const toastEl = $("#toast");
 
-    // ============================================================
-    // 5. 工具函数
-    // ============================================================
     function escapeHtml(str) {
       const div = document.createElement("div");
       div.textContent = str;
@@ -819,91 +651,61 @@
     }
 
     function updateCharCount(text) {
-      const len = text.length;
-      charCount.textContent = `${len} 字符`;
+      charCount.textContent = `${text.length} 字符`;
     }
 
-    // ============================================================
-    // 6. 渲染模板卡片
-    // ============================================================
-    function renderTemplateCards() {
-      const activeTpl = findMatchingTemplate();
-
-      templateGrid.innerHTML = FOOD_TEMPLATES.map(t => {
-        const isActive = activeTpl && activeTpl.id === t.id;
-        return `<div class="template-card ${isActive ? "is-active" : ""}" data-template="${t.id}">
-          <div class="tpl-name">${escapeHtml(t.name)}</div>
-          <div class="tpl-desc">${escapeHtml(t.desc)}</div>
-          <span class="tpl-badge">${isActive ? "已应用" : "一键应用"}</span>
-          <span class="tpl-active">当前模板</span>
+    function renderSuiteCards() {
+      suiteGrid.innerHTML = Object.entries(PRODUCT_SUITES).map(([id, suite]) => {
+        const isActive = state.product === id;
+        const sceneChips = suite.scenes.map(s => `<span class="suite-scene-chip">${SCENE_LABELS[s] || s}</span>`).join("");
+        return `<div class="suite-card ${isActive ? "is-active" : ""}" data-suite="${id}">
+          <div class="suite-name">${escapeHtml(suite.name)}</div>
+          <div class="suite-scenes">${sceneChips}</div>
+          <span class="suite-active-badge">当前</span>
         </div>`;
       }).join("");
 
-      templateGrid.querySelectorAll("[data-template]").forEach((card) => {
+      suiteGrid.querySelectorAll("[data-suite]").forEach((card) => {
         card.addEventListener("click", () => {
-          const id = card.getAttribute("data-template");
-          const tpl = FOOD_TEMPLATES.find(t => t.id === id);
-          if (!tpl) return;
-          applyTemplate(tpl);
+          const id = card.getAttribute("data-suite");
+          const suite = PRODUCT_SUITES[id];
+          if (!suite) return;
+          applySuite(suite);
         });
       });
     }
 
-    function applyTemplate(tpl) {
-      state.product = tpl.product;
-      state.scene = tpl.scene;
-      state.sideDish = tpl.sideDish;
-      state.packaging = new Set(tpl.packaging);
+    function applySuite(suite) {
+      state.product = suite.product;
+      state.scene = suite.defaultScene;
+      state.sideDish = suite.defaultSideDish;
+      state.packaging = new Set(suite.defaultPackaging);
 
-      renderProductSelector();
+      renderSuiteCards();
       renderSceneSelector();
       renderPackagingSelector();
       renderSidesSelector();
-      renderTemplateCards();
+      updatePackagingHint();
       onSelectionChange();
-      showToast(`已应用模板：${tpl.name}`);
-    }
-
-
-    // ============================================================
-    // 7. 渲染选择器
-    // ============================================================
-    function renderProductSelector() {
-      const products = FOOD_MODULES.products;
-      productSelector.innerHTML = Object.entries(products).map(([id, p]) =>
-        `<button type="button" class="chip ${state.product === id ? "selected" : ""}" data-product="${id}">
-          <span class="chip-check">✓</span>
-          <span class="chip-emoji">${p.emoji}</span>
-          ${escapeHtml(p.name)}
-        </button>`
-      ).join("");
-
-      productSelector.querySelectorAll("[data-product]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const id = btn.getAttribute("data-product");
-          state.product = state.product === id ? null : id;
-          renderProductSelector();
-          renderTemplateCards();
-          onSelectionChange();
-        });
-      });
+      showToast(`已切换至 ${suite.name}`);
     }
 
     function renderSceneSelector() {
       const scenes = FOOD_MODULES.scenes;
-      sceneSelector.innerHTML = Object.entries(scenes).map(([id, s]) =>
-        `<button type="button" class="chip ${state.scene === id ? "selected" : ""}" data-scene="${id}">
+      sceneSelector.innerHTML = SCENE_ORDER.map(id => {
+        const s = scenes[id];
+        if (!s) return "";
+        return `<button type="button" class="chip ${state.scene === id ? "selected" : ""}" data-scene="${id}">
           <span class="chip-check">✓</span>
           ${escapeHtml(s.name)}
-        </button>`
-      ).join("");
+        </button>`;
+      }).join("");
 
       sceneSelector.querySelectorAll("[data-scene]").forEach((btn) => {
         btn.addEventListener("click", () => {
           const id = btn.getAttribute("data-scene");
           state.scene = state.scene === id ? null : id;
           renderSceneSelector();
-          renderTemplateCards();
           onSelectionChange();
         });
       });
@@ -927,7 +729,7 @@
             state.packaging.add(id);
           }
           renderPackagingSelector();
-          renderTemplateCards();
+          updatePackagingHint();
           onSelectionChange();
         });
       });
@@ -947,22 +749,19 @@
           const id = btn.getAttribute("data-sides");
           state.sideDish = state.sideDish === id ? null : id;
           renderSidesSelector();
-          renderTemplateCards();
           onSelectionChange();
         });
       });
     }
 
-
-    // ============================================================
-    // 8. 匹配模板 & 组装 prompt
-    // ============================================================
-    function findMatchingTemplate() {
-      if (!state.product || !state.scene) return null;
-      let match = FOOD_TEMPLATES.find(t => t.product === state.product && t.scene === state.scene);
-      if (match) return match;
-      match = FOOD_TEMPLATES.find(t => t.product === state.product);
-      return match || null;
+    function updatePackagingHint() {
+      const isFish = state.product === "fish";
+      const hasNonNonePackaging = [...state.packaging].some(id => id !== "none");
+      if (isFish && hasNonNonePackaging) {
+        packagingHint.classList.add("visible");
+      } else {
+        packagingHint.classList.remove("visible");
+      }
     }
 
     function getLayerTexts() {
@@ -976,7 +775,6 @@
         : "（未选择配菜策略）";
       const productSideDishText = FOOD_MODULES.productSideDishes[state.product];
 
-      // 包装层：排除 "none" 后，如果有包装策略则组装
       const hasPackaging = state.packaging.size > 0 && !(state.packaging.size === 1 && state.packaging.has("none"));
       let packagingTexts = [];
       if (hasPackaging) {
@@ -990,7 +788,6 @@
         ? packagingTexts.join("；")
         : "不出现产品包装。画面只保留真实家庭厨房或餐桌场景、主菜、配菜和少量日常用品。";
 
-      // 负向约束组装
       const neg = FOOD_MODULES.negativeConstraints;
       let negativeParts = [neg.global, neg.oilControl, prod.negatives];
       if (hasPackaging) {
@@ -999,56 +796,64 @@
       const negativeText = negativeParts.join("\n");
 
       const layers = [];
-
-      layers.push({ name: "真实生活感底色层", text: FOOD_MODULES.globalBase.realism, tag: "通用" });
-      layers.push({ name: "场景层", text: scn.desc, tag: "场景" });
-      layers.push({ name: "产品主体识别层", text: prod.identity, tag: "产品" });
-      layers.push({ name: "产品×场景特化层", text: override, tag: "产品" });
-      layers.push({ name: "配菜策略层", text: sideDishText, tag: "配菜" });
-      layers.push({ name: "产品专属辅料层", text: productSideDishText, tag: "配菜" });
-      layers.push({ name: "包装植入层", text: packagingText, tag: "包装" });
-      layers.push({ name: "负向约束层", text: negativeText, tag: "通用" });
-
+      layers.push({ name: "真实生活感底色层", text: FOOD_MODULES.globalBase.realism, tag: "通用", defaultOpen: false });
+      layers.push({ name: "场景层", text: scn.desc, tag: "场景", defaultOpen: true });
+      layers.push({ name: "产品主体识别层", text: prod.identity, tag: "产品", defaultOpen: true });
+      layers.push({ name: "产品×场景特化层", text: override, tag: "产品", defaultOpen: true });
+      layers.push({ name: "配菜策略层", text: sideDishText, tag: "配菜", defaultOpen: false });
+      layers.push({ name: "产品专属辅料层", text: productSideDishText, tag: "配菜", defaultOpen: false });
+      layers.push({ name: "包装植入层", text: packagingText, tag: "包装", defaultOpen: false });
+      layers.push({ name: "负向约束层", text: negativeText, tag: "负向", defaultOpen: false });
       return layers;
     }
 
-
     function assemblePrompt() {
       const layers = getLayerTexts();
-
       if (!layers) {
         promptPreview.value = "";
         updateCharCount("");
         renderModuleCards(null);
+        renderCompositionSummary();
         return;
       }
-
       const fullPrompt = layers.map(l => l.text).filter(t => t).join("\n\n");
       promptPreview.value = fullPrompt;
       updateCharCount(fullPrompt);
-
       renderModuleCards(layers);
+      renderCompositionSummary();
     }
 
-    // ============================================================
-    // 9. 渲染模块预览卡片
-    // ============================================================
-    function renderModuleCards(layers) {
-      if (!layers || layers.length === 0) {
-        moduleGrid.innerHTML = `<div class="empty-state" style="text-align:center;padding:32px 16px;color:var(--text-muted);background:var(--surface);border-radius:var(--radius);font-size:0.88rem;">选择产品和场景后，此处将展示各层模块内容</div>`;
+    function renderCompositionSummary() {
+      if (!state.product || !state.scene) {
+        compositionSummary.textContent = "请先选择产品套组和场景。";
         return;
       }
+      const prod = FOOD_MODULES.products[state.product];
+      const scn = FOOD_MODULES.scenes[state.scene];
+      const sideDishName = state.sideDish ? FOOD_MODULES.sideDishStrategies[state.sideDish].name : "None";
+      const packagingNames = [...state.packaging]
+        .map(id => FOOD_MODULES.packagingStrategies[id]?.name || id)
+        .join(" + ");
+      compositionSummary.innerHTML =
+        `<strong>${prod.name}</strong> ｜ ${scn.name} ｜ ${packagingNames} ｜ ${sideDishName}`;
+    }
 
-      moduleGrid.innerHTML = layers.map((layer, i) =>
-        `<div class="module-card">
-          <div class="module-card-header open" data-mc-index="${i}">
+    function renderModuleCards(layers) {
+      if (!layers || layers.length === 0) {
+        moduleGrid.innerHTML = `<div style="text-align:center;padding:28px 16px;color:var(--text-muted);background:var(--surface);border-radius:var(--radius);font-size:0.85rem;">选择产品套组和场景后查看模块。</div>`;
+        return;
+      }
+      moduleGrid.innerHTML = layers.map((layer, i) => {
+        const isOpen = layer.defaultOpen;
+        return `<div class="module-card">
+          <div class="module-card-header ${isOpen ? "open" : ""}" data-mc-index="${i}">
             <span class="mc-toggle">▶</span>
             <span class="mc-label">${escapeHtml(layer.name)}</span>
             <span class="mc-tag">${layer.tag || ""}</span>
           </div>
-          <div class="module-card-body">${escapeHtml(layer.text)}</div>
-        </div>`
-      ).join("");
+          <div class="module-card-body ${isOpen ? "" : "collapsed"}">${escapeHtml(layer.text)}</div>
+        </div>`;
+      }).join("");
 
       moduleGrid.querySelectorAll("[data-mc-index]").forEach((header) => {
         header.addEventListener("click", () => {
@@ -1060,23 +865,16 @@
       });
     }
 
-    // ============================================================
-    // 10. 选择变更回调
-    // ============================================================
     function onSelectionChange() {
       assemblePrompt();
     }
 
-    // ============================================================
-    // 11. 复制功能
-    // ============================================================
     async function copyPrompt() {
       const text = promptPreview.value.trim();
       if (!text) {
-        showToast("请先选择产品和场景生成 prompt");
+        showToast("请先选择产品套组和场景。");
         return;
       }
-
       try {
         await navigator.clipboard.writeText(text);
       } catch {
@@ -1089,48 +887,37 @@
         document.execCommand("copy");
         document.body.removeChild(ta);
       }
-
-      btnCopy.textContent = "✅ 已复制";
+      btnCopy.textContent = "已复制";
       btnCopy.classList.add("copied");
       setTimeout(() => {
-        btnCopy.textContent = "📋 复制";
+        btnCopy.textContent = "复制";
         btnCopy.classList.remove("copied");
       }, 1500);
       showToast("已复制到剪贴板");
     }
 
-    // ============================================================
-    // 12. 重置为默认
-    // ============================================================
     function resetToDefault() {
       state.product = DEFAULT_STATE.product;
       state.scene = DEFAULT_STATE.scene;
       state.sideDish = DEFAULT_STATE.sideDish;
       state.packaging = new Set(DEFAULT_STATE.packaging);
 
-      renderProductSelector();
+      renderSuiteCards();
       renderSceneSelector();
       renderPackagingSelector();
       renderSidesSelector();
-      renderTemplateCards();
+      updatePackagingHint();
       onSelectionChange();
       showToast("已重置为默认配置（牛排 · 厨房煎制）");
     }
 
-
-    // ============================================================
-    // 13. 初始化
-    // ============================================================
     function init() {
-      renderTemplateCards();
-      renderProductSelector();
+      renderSuiteCards();
       renderSceneSelector();
       renderPackagingSelector();
       renderSidesSelector();
-
-      // 立即生成默认 prompt
+      updatePackagingHint();
       assemblePrompt();
-
       btnCopy.addEventListener("click", copyPrompt);
       btnReset.addEventListener("click", resetToDefault);
     }
